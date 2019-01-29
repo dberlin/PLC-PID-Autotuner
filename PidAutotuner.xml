@@ -1,0 +1,862 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="Beckhoff Automation GmbH" productName="TwinCAT PLC Control" productVersion="3.5.10.30" creationDateTime="2019-01-29T12:52:46.8644598" />
+  <contentHeader name="CNCControl" modificationDateTime="2019-01-29T12:52:46.8654563">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="1" y="1" />
+      </fbd>
+      <ld>
+        <scaling x="1" y="1" />
+      </ld>
+      <sfc>
+        <scaling x="1" y="1" />
+      </sfc>
+    </coordinateInfo>
+    <addData>
+      <data name="http://www.3s-software.com/plcopenxml/projectinformation" handleUnknown="implementation">
+        <ProjectInformation />
+      </data>
+    </addData>
+  </contentHeader>
+  <types>
+    <dataTypes>
+      <dataType name="E_PIDOptimizationStage">
+        <baseType>
+          <enum>
+            <values>
+              <value name="Init" />
+              <value name="RampingUp" />
+              <value name="RampingDown" />
+              <value name="Done" />
+            </values>
+          </enum>
+        </baseType>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/attributes" handleUnknown="implementation">
+            <Attributes>
+              <Attribute Name="qualified_only" Value="" />
+              <Attribute Name="strict" Value="" />
+            </Attributes>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_PIDOptimizationStage :
+(
+	Init,
+	RampingUp,
+	RampingDown,
+	Done
+);
+END_TYPE
+</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/objectid" handleUnknown="discard">
+            <ObjectId>1ed0394c-f211-4304-974d-674b78c6be4b</ObjectId>
+          </data>
+        </addData>
+      </dataType>
+      <dataType name="E_PIDOptimizationType">
+        <baseType>
+          <enum>
+            <values>
+              <value name="NoOvershoot" />
+              <value name="SomeOvershoot" />
+              <value name="PessenIntegralRule" />
+            </values>
+          </enum>
+        </baseType>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/attributes" handleUnknown="implementation">
+            <Attributes>
+              <Attribute Name="qualified_only" Value="" />
+              <Attribute Name="strict" Value="" />
+            </Attributes>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_PIDOptimizationType :
+(
+	NoOvershoot,
+	SomeOvershoot,
+	PessenIntegralRule
+);
+END_TYPE
+</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/objectid" handleUnknown="discard">
+            <ObjectId>24fbb2db-7f99-4a85-920b-5fba7f29c462</ObjectId>
+          </data>
+        </addData>
+      </dataType>
+    </dataTypes>
+    <pous>
+      <pou name="FB_MovingAverageReal" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="ValueToAdd">
+              <type>
+                <LREAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Value to add to the moving average.</xhtml>
+              </documentation>
+            </variable>
+            <variable name="NumValuesToUse">
+              <type>
+                <UINT />
+              </type>
+              <initialValue>
+                <simpleValue value="ANY_TO_UINT(((UPPER_BOUND(AverageArray, 1) - LOWER_BOUND(AverageArray, 1)) + 1))" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> The number of values to store in the array.</xhtml>
+              </documentation>
+            </variable>
+            <variable name="AverageArray">
+              <type>
+                <pointer>
+                  <baseType>
+                    <LREAL />
+                  </baseType>
+                </pointer>
+              </type>
+              <addData>
+                <data name="http://www.3s-software.com/plcopenxml/attributes" handleUnknown="implementation">
+                  <Attributes>
+                    <Attribute Name="variable_length_array" />
+                    <Attribute Name="Dimensions" Value="1" />
+                  </Attributes>
+                </data>
+              </addData>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="CurrentValue">
+              <type>
+                <LREAL />
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="CurrentIndex">
+              <type>
+                <UINT />
+              </type>
+            </variable>
+            <variable name="NumValuesAdded">
+              <type>
+                <UINT />
+              </type>
+            </variable>
+          </localVars>
+          <tempVars>
+            <variable name="Counted">
+              <type>
+                <UINT />
+              </type>
+            </variable>
+            <variable name="I">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="Sum">
+              <type>
+                <LREAL />
+              </type>
+            </variable>
+            <variable name="ArrayLength">
+              <type>
+                <UINT />
+              </type>
+              <initialValue>
+                <simpleValue value="ANY_TO_UINT(((UPPER_BOUND(AverageArray, 1) - LOWER_BOUND(AverageArray, 1)) + 1))" />
+              </initialValue>
+            </variable>
+          </tempVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">// Compute average over array.
+// The order of this addition and MOD are important to avoid going out of bounds.
+NumValuesToUse := MIN(ArrayLength, NumValuesToUse);
+AverageArray[CurrentIndex] := ValueToAdd;
+CurrentIndex := CurrentIndex + 1;
+CurrentIndex := CurrentIndex MOD NumValuesToUse;
+NumValuesAdded := MIN(NumValuesAdded + 1 , NumValuesToUse);
+IF NumValuesAdded &gt; 0 THEN
+	FOR I := LOWER_BOUND(AverageArray, 1) TO UPPER_BOUND(AverageArray, 1) BY 1 DO
+		Sum := Sum + AverageArray[I];
+		Counted := Counted + 1;
+		// Don't count more than the number of values.
+		IF Counted &gt; NumValuesAdded THEN
+			EXIT;
+		END_IF
+	END_FOR
+END_IF
+CurrentValue := TO_REAL(Sum / NumValuesAdded);</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_MovingAverageReal
+VAR_INPUT
+	// Value to add to the moving average.
+	ValueToAdd : LREAL;
+	// The number of values to store in the array.
+	NumValuesToUse : UINT := TO_UINT(UPPER_BOUND(AverageArray, 1) - LOWER_BOUND(AverageArray, 1) + 1);
+END_VAR
+VAR_IN_OUT
+	AverageArray  : ARRAY [*] OF LREAL;
+END_VAR
+VAR_OUTPUT
+	CurrentValue : LREAL;
+END_VAR
+VAR
+	CurrentIndex : UINT;
+	NumValuesAdded: UINT;
+END_VAR
+VAR_TEMP
+	Counted : UINT;
+	I: DINT;
+	Sum: LREAL;
+	ArrayLength : UINT := TO_UINT(UPPER_BOUND(AverageArray, 1) - LOWER_BOUND(AverageArray, 1) + 1);
+END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/objectid" handleUnknown="discard">
+            <ObjectId>fda7e211-5c6c-492f-ac36-81cea3ee5c49</ObjectId>
+          </data>
+        </addData>
+      </pou>
+      <pou name="FB_FreqMeasure" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="IN">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Input signal</xhtml>
+              </documentation>
+            </variable>
+            <variable name="PERIODS">
+              <type>
+                <UINT />
+              </type>
+              <initialValue>
+                <simpleValue value="1" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Number of periods to average the frequency over.
+ Must be between 1 and 100</xhtml>
+              </documentation>
+            </variable>
+            <variable name="RESET">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Reset all parameters to 0</xhtml>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="OUT">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Frequency in HZ</xhtml>
+              </documentation>
+            </variable>
+            <variable name="VALID">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> FALSE until we've measured at least PERIODS periods, or if distance between two rising edges is &gt; 3 * OUT</xhtml>
+              </documentation>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="RisingEnableEdge">
+              <type>
+                <derived name="R_TRIG" />
+              </type>
+            </variable>
+            <variable name="FallingEnableEdge">
+              <type>
+                <derived name="F_TRIG" />
+              </type>
+            </variable>
+            <variable name="STARTED">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="RISETIME">
+              <type>
+                <TIME />
+              </type>
+            </variable>
+            <variable name="AveragePeriod">
+              <type>
+                <derived name="FB_MovingAverageReal" />
+              </type>
+            </variable>
+            <variable name="DIFF">
+              <type>
+                <DINT />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Difference in time between current and last rising edge</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TIMEDIFF">
+              <type>
+                <array>
+                  <dimension lower="0" upper="99" />
+                  <baseType>
+                    <LREAL />
+                  </baseType>
+                </array>
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Array of time differences for each period</xhtml>
+              </documentation>
+            </variable>
+            <variable name="COUNT">
+              <type>
+                <UINT />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> How many periods we have counted so far</xhtml>
+              </documentation>
+            </variable>
+            <variable name="SYSTIMEMS">
+              <type>
+                <TIME />
+              </type>
+            </variable>
+          </localVars>
+          <tempVars>
+            <variable name="OutTemp">
+              <type>
+                <LREAL />
+              </type>
+            </variable>
+          </tempVars>
+          <documentation>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml"> This function is the equivalent of FREQ_MEASURE from codesys's utility library.
+   It emulates their wacky API that tries to auto-detect specific errors </xhtml>
+          </documentation>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">
+IF Reset THEN
+    VALID := FALSE;
+    COUNT := 0;
+    STARTED := FALSE;
+    OUT := 0;
+    RETURN;
+END_IF
+
+RisingEnableEdge(CLK := IN);
+FallingEnableEdge(CLK := IN);
+
+(* We care only about whether we are the beginning or the end of the signal.
+   If we are at the beginning, we store the current time the signal rose.
+   If we are the end, we look at the current time, subtract the rise time,
+   and add the signal time period to the period array.
+   Once we have collected the requested number of periods, we start averaging
+   and mark ourselves valid. *)
+IF RisingEnableEdge.Q OR FallingEnableEdge.Q THEN
+	// The tming mechanism depends on the PLC. What we expect is something that produces milliseconds.
+	// The only requirement is that the difference between the two times represent the signal period in millliseconds
+	SYSTIMEMS := ULINT_TO_TIME(F_GetTaskTime() / TC2_Utilities.SYSTEMTIME_TICKSPERMSEC64);
+    IF FallingEnableEdge.Q AND STARTED THEN
+		DIFF := TIME_TO_DINT(SYSTIMEMS - RISETIME);
+		// We assume time never goes backwards for real. Unfortunately, the API of this call does
+		// not give us a way to express errors easily.
+        IF Diff &gt; 0 THEN
+			// Emulate the weird behavior of CODESYS FREQ_MEASURE
+			IF VALID AND Diff &gt; 3000 * REAL_TO_DINT(OUT) THEN
+				VALID := FALSE;
+				COUNT := 0;
+				RETURN;
+			END_IF
+			// Compute moving average over periods
+			AveragePeriod(ValueToAdd := DINT_TO_REAL(DIFF),
+						  AverageArray := TIMEDIFF,
+						  NumValuesToUse := PERIODS,
+						  CurrentValue =&gt; OutTemp);
+			Out := LREAL_TO_REAL (OutTemp); 
+            COUNT := MIN(COUNT + 1, PERIODS);
+			// Go valid once we have the minimum number of periods to average over.
+            VALID := COUNT = PERIODS;
+        END_IF
+		STARTED := FALSE;
+		RETURN;
+    END_IF
+    STARTED := TRUE;
+    RISETIME := SYSTIMEMS;
+END_IF
+
+</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">(* This function is the equivalent of FREQ_MEASURE from codesys's utility library.
+   It emulates their wacky API that tries to auto-detect specific errors *)
+FUNCTION_BLOCK FB_FreqMeasure
+VAR_INPUT
+	// Input signal
+    IN: BOOL;
+	// Number of periods to average the frequency over.
+	// Must be between 1 and 100
+    PERIODS: UINT := 1;
+	// Reset all parameters to 0
+    RESET: BOOL;
+END_VAR
+VAR_OUTPUT
+	// Frequency in HZ
+    OUT: REAL;
+	// FALSE until we've measured at least PERIODS periods, or if distance between two rising edges is &gt; 3 * OUT
+    VALID: BOOL;
+END_VAR
+VAR
+	RisingEnableEdge: R_TRIG;
+	FallingEnableEdge : F_TRIG;
+    STARTED: BOOL;
+    RISETIME: TIME;
+	AveragePeriod : FB_MovingAverageReal;
+	// Difference in time between current and last rising edge
+    DIFF: DINT;
+	// Array of time differences for each period
+    TIMEDIFF: ARRAY[0..99] OF LREAL;
+	// How many periods we have counted so far
+    COUNT: UINT;
+	SYSTIMEMS : TIME;          
+END_VAR
+VAR_TEMP
+	OutTemp : LREAL;
+END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/objectid" handleUnknown="discard">
+            <ObjectId>3d6d3d65-e18a-4fc3-a773-f23be8247d43</ObjectId>
+          </data>
+        </addData>
+      </pou>
+      <pou name="FB_OptimizePID" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="Enable">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Starts the sequence on the rising edge</xhtml>
+              </documentation>
+            </variable>
+            <variable name="ProcessSetpoint">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Set point </xhtml>
+              </documentation>
+            </variable>
+            <variable name="ProcessValue">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Process measurement </xhtml>
+              </documentation>
+            </variable>
+            <variable name="NumCycles">
+              <type>
+                <INT />
+              </type>
+              <initialValue>
+                <simpleValue value="2" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Number of automatic adjustment cycles (minimum 2) </xhtml>
+              </documentation>
+            </variable>
+            <variable name="Reset">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Reset</xhtml>
+              </documentation>
+            </variable>
+            <variable name="ControlLowVal">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Low value for the square wave output</xhtml>
+              </documentation>
+            </variable>
+            <variable name="ControlHighVal">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> High value for the square wave output</xhtml>
+              </documentation>
+            </variable>
+            <variable name="PIDType">
+              <type>
+                <derived name="E_PIDOptimizationType" />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> PID constants to use</xhtml>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="TuningDone">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> End sequence</xhtml>
+              </documentation>
+            </variable>
+            <variable name="ControlValue">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Square wave output for the exitation of the process</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Kp">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Proportional gain</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Ki">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Integral time in S</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Kd">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Derivative time in s</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Ku">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Ultimate Gain </xhtml>
+              </documentation>
+            </variable>
+            <variable name="Tu">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Ultimate Period</xhtml>
+              </documentation>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="rTrigEnable">
+              <type>
+                <derived name="R_TRIG" />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Enable trigger</xhtml>
+              </documentation>
+            </variable>
+            <variable name="b">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Amplitude of process variable</xhtml>
+              </documentation>
+            </variable>
+            <variable name="a">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> Amplitude of control variable</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TuFreq">
+              <type>
+                <derived name="FB_FreqMeasure" />
+              </type>
+            </variable>
+            <variable name="b_Min">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="b_Max">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="EndTrigger">
+              <type>
+                <derived name="R_TRIG" />
+              </type>
+            </variable>
+            <variable name="TuningSequence">
+              <type>
+                <derived name="E_PIDOptimizationStage" />
+              </type>
+            </variable>
+            <variable name="CycleNumber">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </localVars>
+          <localVars constant="true">
+            <variable name="PI">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="REAL#3.1415926535897931" />
+              </initialValue>
+            </variable>
+            <variable name="REAL_MAX">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="3.402823E+38" />
+              </initialValue>
+            </variable>
+            <variable name="REAL_MIN">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="-3.402823E+38" />
+              </initialValue>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">
+IF Reset THEN
+    TuningSequence := E_PIDOptimizationStage.Init;
+	TuningDone := FALSE;
+END_IF;
+IF TuningDone THEN
+	RETURN;
+END_IF
+
+CASE TuningSequence OF
+	// Startup - initialize and set to ramp up to setpoint
+	E_PIDOptimizationStage.Init: 
+		ControlValue := ControlLowVal;
+		IF rTrigEnable.Q THEN
+			TuFreq(
+				IN := FALSE,
+				PERIODS := NumCycles,
+				RESET := TRUE); 
+			b_Min := REAL_MAX ;
+			b_Max := REAL_MIN ;
+			KP := 0;
+			Ki := 0;
+			Kd := 0;
+			CycleNumber := 0;
+			TuningSequence := E_PIDOptimizationStage.RampingUp;
+		END_IF;
+
+	// Ramp to setpoint
+	E_PIDOptimizationStage.RampingUp:
+		ControlValue := ControlHighVal;
+		// If we hit the setpoint, transition to ramping down
+		IF ProcessValue &gt; ProcessSetpoint THEN
+			ControlValue := ControlLowVal;
+			CycleNumber := CycleNumber + 1;
+			TuningSequence := E_PIDOptimizationStage.RampingDown;
+		END_IF;
+		
+	// Wait for process value to fall below setpoint
+	E_PIDOptimizationStage.RampingDown:
+		// Once process value falls, either we are done if we hit the cycle count,
+		// or we need to start the next cycle.
+		IF ProcessValue &lt; ProcessSetpoint THEN
+			IF CycleNumber &gt; NumCycles THEN
+				TuningSequence := E_PIDOptimizationStage.Done;
+			ELSE
+				TuningSequence := E_PIDOptimizationStage.RampingUp;
+			END_IF;
+		END_IF;
+
+END_CASE;
+
+
+(*Only Start Measuring Min/Max once we've crossed setpoint once this is to make sure we don't take 0 as value*)
+IF CycleNumber  &gt; 0  THEN
+	b_Min := MIN(b_Min, ProcessValue);
+	b_Max := MAX(b_Max, ProcessValue);
+	
+	
+	TuFreq(
+		IN := ProcessValue &gt; ProcessSetpoint,
+		PERIODS := NumCycles,
+		RESET := FALSE); 
+	// We don't check the error becuase i'm lazy. In a real system, if the TuFreq goes invalid, it means the data is screwed up and you need to do something.
+
+END_IF
+EndTrigger(CLK := TuningSequence = E_PIDOptimizationStage.Done AND TuFreq.OUT &lt;&gt; 0);
+IF EndTrigger.Q THEN
+    // Calculate amplitude of control variable
+    a := ControlHighVal - ControlLowVal;
+
+	// Calculate amplitude of process variable
+    b := b_Max - b_Min;
+
+    // Calculate ultimate period and gain
+    Ku := (4 * b)/(PI * a);
+    Tu := 1 / TuFreq.OUT;
+
+    CASE PIDType OF
+    E_PIDOptimizationType.PessenIntegralRule:
+        Kp := 0.7 * Ku;
+        Ki := (1.75 * Kp) / Tu;
+        Kd := 3* Kp * (Tu/20.0);
+
+    E_PIDOptimizationType.SomeOvershoot:
+        Kp := Ku /3.0;
+        Ki := (2/3.0) * Ku / Tu ;
+        Kd := Ku * Tu  / 10.0;
+
+    E_PIDOptimizationType.NoOvershoot:
+        Kp := 0.2 * Ku ;
+        Ki := 2 * Ku / Tu  / 5.0;
+        Kd := 2* Ku * Tu / 3.0;
+    END_CASE;
+    
+    TuningDone := TRUE;
+    TuningSequence := E_PIDOptimizationStage.Init;
+
+END_IF;
+rTrigEnable(CLK := Enable);
+</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_OptimizePID
+
+VAR_INPUT
+	// Starts the sequence on the rising edge
+	Enable : BOOL; 
+	// Set point 
+	ProcessSetpoint : REAL; 
+	// Process measurement 
+	ProcessValue : REAL;
+	// Number of automatic adjustment cycles (minimum 2) 
+	NumCycles : INT := 2; 
+	// Reset
+	Reset : BOOL;
+	// Low value for the square wave output
+	ControlLowVal : REAL;
+	// High value for the square wave output
+	ControlHighVal: REAL;
+	// PID constants to use
+	PIDType: E_PIDOptimizationType;
+END_VAR
+VAR_OUTPUT
+	// End sequence
+	TuningDone: BOOL;
+	// Square wave output for the exitation of the process
+	ControlValue: REAL; 
+	// Proportional gain
+	Kp: REAL;
+	// Integral time in S
+	Ki: REAL;
+	// Derivative time in s
+	Kd: REAL;
+	// Ultimate Gain 
+	Ku: REAL;
+	// Ultimate Period
+	Tu: REAL;
+END_VAR
+VAR
+	// Enable trigger
+	rTrigEnable : R_TRIG;
+	// Amplitude of process variable
+	b: REAL;
+	// Amplitude of control variable
+	a: REAL;
+    TuFreq: FB_FreqMeasure;      
+    b_Min: REAL;
+    b_Max: REAL;
+	EndTrigger : R_TRIG;    
+    TuningSequence: E_PIDOptimizationStage;
+    CycleNumber: INT;
+END_VAR
+VAR CONSTANT
+    PI : REAL := REAL#3.14159265358979323846264338327950288;
+	REAL_MAX : REAL :=  3.402823E+38;
+	REAL_MIN : REAL :=-3.402823E+38;
+END_VAR 
+
+</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/objectid" handleUnknown="discard">
+            <ObjectId>626227d0-9b37-4afe-a71a-fd287754eb95</ObjectId>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+  <addData>
+    <data name="http://www.3s-software.com/plcopenxml/projectstructure" handleUnknown="discard">
+      <ProjectStructure>
+        <Object Name="FB_MovingAverageReal" ObjectId="fda7e211-5c6c-492f-ac36-81cea3ee5c49" />
+        <Object Name="FB_FreqMeasure" ObjectId="3d6d3d65-e18a-4fc3-a773-f23be8247d43" />
+        <Object Name="FB_OptimizePID" ObjectId="626227d0-9b37-4afe-a71a-fd287754eb95" />
+        <Object Name="E_PIDOptimizationStage" ObjectId="1ed0394c-f211-4304-974d-674b78c6be4b" />
+        <Object Name="E_PIDOptimizationType" ObjectId="24fbb2db-7f99-4a85-920b-5fba7f29c462" />
+      </ProjectStructure>
+    </data>
+  </addData>
+</project>
