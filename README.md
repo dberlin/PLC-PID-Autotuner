@@ -43,6 +43,7 @@ Repeat this a bunch of times and average the results. This will give you an aver
 The resulting oscillation period + amplitudes of the of process and control variables are then used to compute ultimate gain.
 The ultimate gain is used to compute the pid constants.
 
+You don't have to use full speed, we allow any variant of lower and upper amplitude (so that you can make it safe)
 As mentioned above, there are other models/methods.  This method works well for systems that have simple responses and where you don't really change the setpoint.
 
 
